@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+}
+
+.snap-container {
+  height: 100vh; /* Fixed height to enable scrolling */
+  overflow-y: scroll; /* Enable vertical scrolling */
+  scroll-snap-type: y mandatory; /* Mandatory snapping */
+}
+
+canvas {
+  z-index: 0;
+}
+
+div {
+  position: relative;
+}
