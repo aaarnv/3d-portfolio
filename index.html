@@ -10,29 +10,48 @@
   </head>
   <body class="bg-transparent">
     <canvas id="bg" class="fixed top-0 left-0 w-full h-full z-0"></canvas>
-    <div class="snap-container relative z-10 h-screen overflow-y-scroll snap-y snap-mandatory">
+    <div id="app" class="snap-container relative z-10 h-screen overflow-y-scroll snap-y snap-mandatory">
       <section class="min-h-screen snap-center flex items-center">
         <div class="w-1/2 pl-8 md:pl-80">
           <h1 class="text-4xl md:text-5xl font-bold text-[#163f38] font-helvetica-neue">Aarnav Sheth</h1>
-          <p class="text-xl md:text-2xl text-gray-600 mt-2">the mind of a backend dev & the heart of a frontend dev makes one hell of a full stack engineer</p>
+          <p class="text-xl md:text-2xl text-gray-600 mt-2">the mind of a backend dev and the heart of a frontend dev makes one hell of a full stack engineer</p>
         </div>
       </section>
-      <section class="min-h-screen snap-center flex items-center">
-        <div class="w-1/2 pl-8 md:pl-40">
-          <p class="text-lg md:text-xl text-gray-700">wabbadabadoodle (Skills)</p>
+      <section class="min-h-screen snap-center flex items-start">
+        <div class="pl-8 md:pl-40 pt-32">
+          <p class="text-lg md:text-3xl text-white font-bold">SKILLS</p>
+          <p class="text-base md:text-xl text-white max-w-md mt-4">these skills help break down walls that prevent progress...</p>
+          <p class="text-base md:text-xl text-white mt-6"><span class="font-medium">currently learning:</span> PyTorch</p>
+        </div>
+        <canvas id="skillsCanvas" class="absolute top-0 left-0 w-full h-full z-20 hidden"></canvas>
+      </section>
+      <section class="min-h-screen flex flex-col items-center pt-16">
+        <p class="text-3xl md:text-2xl font-bold text-white mb-8">PROJECTS</p>
+        
+        <!-- Gallery controls (arrows) -->
+        <div id="galleryControls" class="fixed bottom-10 left-0 w-full flex justify-center items-center z-40" style="display: none;">
+          <div class="flex items-center gap-16">
+            <button id="galleryLeftArrow" class="arrow-btn arrow-left" aria-label="Previous project"></button>
+            
+            <div id="projectInfo" class="flex flex-col items-center justify-center text-center text-white opacity-0 transition-opacity duration-500 ease-in-out" style="width: 300px;">
+              <h2 id="projectTitle" class="text-2xl font-bold mb-2"></h2>
+              <p id="projectDescription" class="text-lg mb-4"></p>
+              <a id="projectLink" href="#" target="_blank" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white transition-colors duration-300">Learn More</a>
+            </div>
+            
+            <button id="galleryRightArrow" class="arrow-btn arrow-right" aria-label="Next project"></button>
+          </div>
         </div>
       </section>
-      <section class="min-h-screen snap-center flex items-center">
-        <div class="w-1/2 pl-8 md:pl-40">
-          <p class="text-lg md:text-xl text-gray-700">wabbadabadoodle (Projects)</p>
-        </div>
-      </section>
-      <section class="min-h-screen snap-center flex items-center">
-        <div class="w-1/2 pl-8 md:pl-40">
-          <p class="text-lg md:text-xl text-gray-700">about me</p>
+      <section class="min-h-screen snap-center flex items-center relative">
+        <!-- GIF Background Container -->
+
+        <div class="w-1/2 pl-8 md:pl-40 relative z-10">
+          <p class="text-xl md:text-xl text-gray-700">about me</p>
         </div>
       </section>
     </div>
     <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/particleCursor.js"></script>
   </body>
 </html>

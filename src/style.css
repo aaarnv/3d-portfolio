@@ -4,16 +4,248 @@ body {
   scroll-behavior: smooth;
 }
 
-.snap-container {
-  height: 100vh; /* Fixed height to enable scrolling */
-  overflow-y: scroll; /* Enable vertical scrolling */
-  scroll-snap-type: y mandatory; /* Mandatory snapping */
-}
-
 canvas {
   z-index: 0;
 }
 
 div {
   position: relative;
+}
+
+/* Define the font */
+@font-face {
+  font-family: "Manifold Extended CF";
+  src: url("/src/fonts/Fontspring-DEMO-manifoldextendedcf-demibold.otf") format("opentype");
+  font-weight: normal; /* Adjust if you have multiple weights */
+  font-style: normal; /* Adjust if you have italic versions */
+}
+
+p {
+  font-family: "Manifold Extended CF", sans-serif;
+}
+/* Skills section specific styles */
+#skills-section {
+  position: relative;
+  color: white; /* Keep text white as per your update */
+}
+#skills-top-left {
+  position: absolute;
+  top: 20px;
+  left: 40px; /* Adjusted from pl-8/md:pl-40 for precise positioning */
+}
+#skills-middle-left {
+  position: absolute;
+  top: 50%;
+  left: 40px;
+  transform: translateY(-50%);
+}
+#skills-button {
+  position: absolute;
+  top: 50%;
+  right: 40px;
+  transform: translateY(-50%);
+  background-color: #163f38;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: none; /* Initially hidden */
+}
+
+.snap-container {
+  scroll-snap-type: y mandatory;
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+}
+
+section {
+  scroll-snap-align: center;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+canvas#bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+canvas#skillsCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Make sure pointer events work for interactive elements */
+.pointer-events-none {
+  pointer-events: none;
+}
+
+.pointer-events-auto {
+  pointer-events: auto;
+}
+
+/* Transition for canvas visibility */
+canvas.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Ensure sections are properly spaced */
+.snap-container section {
+  height: 100vh;
+  width: 100vw;
+}
+
+
+.project-info {
+  position: fixed;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-align: center;
+  transition: opacity 0.5s ease;
+  z-index: 30;
+  display: none; /* Initially hidden */
+  max-width: 80%;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+#project-title {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+}
+
+#project-description {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 200;
+  color: #e0e0e0;
+}
+
+/* Add responsive styling */
+@media (max-width: 768px) {
+  .project-info {
+    padding: 0.75rem 1.5rem;
+    bottom: 5%;
+  }
+  
+  #project-title {
+    font-size: 1.5rem;
+  }
+  
+  #project-description {
+    font-size: 1rem;
+  }
+}
+
+#projectInfo {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+#title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+#description {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+.learn-more-btn {
+  background-color: #163f38;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  display: inline-block;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+.learn-more-btn:hover {
+  background-color: #0d2a26;
+}
+
+.arrow-btn {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.arrow-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.arrow-left::before {
+  content: "‹";
+  font-size: 1.8rem;
+  color: white;
+}
+
+.arrow-right::before {
+  content: "›";
+  font-size: 1.8rem;
+  color: white;
+}
+
+#skillsGifContainer {
+  display: none; /* Hidden by default, controlled by JS */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 50; /* Above skillsCanvas (z-20) and other content */
+  background: #000; /* Optional: black background for GIF transparency */
+  opacity: 0; /* Start fully transparent */
+  transition: opacity 0.5s ease; /* Smooth fade effect over 0.5 seconds */
+}
+
+#skillsGifContainer.show {
+  display: block; /* Show when active */
+  opacity: 1; /* Fully visible when shown */
+}
+
+#skillsGif {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures GIF covers the entire container */
+}
+
+
+.about-me-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none; /* Hidden by default */
+}
+
+.about-me-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures GIF covers the section without distortion */
 }
