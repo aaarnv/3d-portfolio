@@ -93,7 +93,7 @@ export function initSkillsPhysics() {
   let hiddenButton = null;
   let buttonRevealed = false; // Track if button has been revealed
 
-  // **Intersection Observer to manage visibility**
+  // In the observer callback, simplify the visibility logic:
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting && entry.intersectionRatio > 0.9) {
@@ -108,8 +108,8 @@ export function initSkillsPhysics() {
         if (!hiddenButton) {
           hiddenButton = createHiddenButton();
         }
-      } else {
-        // Hide canvas and stop physics when scrolling away
+      } else if (!entry.isIntersecting) {
+        // Only hide the canvas when completely out of view
         skillsCanvas.classList.add('hidden');
         
         if (physicsInstance) {
@@ -176,21 +176,21 @@ export function initSkillsPhysics() {
 
     // **Skills Data**
     const skills = [
-        { name: 'Java', color: '#000000', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg' },
-        { name: 'C', color: '#000000', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg' },
-        { name: 'Python', color: '#000000', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
-        { name: 'TypeScript', color: '#000000', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg' },
-        { name: 'React', color: '#000000', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
-        { name: 'Node.js', color: '#000000', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
-        { name: 'Next', color: '#000000', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
-        { name: 'Prisma', color: '#000000', icon: 'https://cdn.worldvectorlogo.com/logos/prisma-2.svg' },
-        { name: 'MongoDB', color: '#000000', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg' },
-        { name: 'PostgreSQL', color: '#000000', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg' },
-        { name: 'Git', color: '#000000', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg' },
-        { name: 'Azure', color: '#000000', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg' },
-        { name: 'Postman', color: '#000000', icon: 'https://www.vectorlogo.zone/logos/getpostman/getpostman-icon.svg' },
-        { name: 'Docker', color: '#000000', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
-        { name: 'Firebase', color: '#000000', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg' }
+        { name: 'Java', color: '#012622', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg' },
+        { name: 'C', color: '#012622', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg' },
+        { name: 'Python', color: '#012622', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
+        { name: 'TypeScript', color: '#012622', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg' },
+        { name: 'React', color: '#012622', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
+        { name: 'Node.js', color: '#012622', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
+        { name: 'Next', color: '#012622', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
+        { name: 'Prisma', color: '#012622', icon: 'https://cdn.worldvectorlogo.com/logos/prisma-2.svg' },
+        { name: 'MongoDB', color: '#012622', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg' },
+        { name: 'PostgreSQL', color: '#012622', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg' },
+        { name: 'Git', color: '#012622', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg' },
+        { name: 'Azure', color: '#012622', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg' },
+        { name: 'Postman', color: '#012622', icon: 'https://www.vectorlogo.zone/logos/getpostman/getpostman-icon.svg' },
+        { name: 'Docker', color: '#012622', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
+        { name: 'Firebase', color: '#012622', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg' }
       ];
 
     // **Calculate Responsive Dimensions**
@@ -246,8 +246,8 @@ export function initSkillsPhysics() {
           frictionAir: 0.001,
           render: {
             fillStyle: skill.color,
-            strokeStyle: '#333',
-            lineWidth: 3
+            strokeStyle: '#FFFFFF',
+            lineWidth: 2.5
           },
           skillName: skill.name,
           isImageLoaded: false,

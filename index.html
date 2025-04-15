@@ -7,51 +7,128 @@
     <title>Aarnav's Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="splash.css" />
   </head>
   <body class="bg-transparent">
     <canvas id="bg" class="fixed top-0 left-0 w-full h-full z-0"></canvas>
     <div id="app" class="snap-container relative z-10 h-screen overflow-y-scroll snap-y snap-mandatory">
       <section class="min-h-screen snap-center flex items-center">
         <div class="w-1/2 pl-8 md:pl-80">
-          <h1 class="text-4xl md:text-5xl font-bold text-[#163f38] font-helvetica-neue">Aarnav Sheth</h1>
-          <p class="text-xl md:text-2xl text-gray-600 mt-2">the mind of a backend dev and the heart of a frontend dev makes one hell of a full stack engineer</p>
+          <h1 class="text-4xl md:text-5xl font-bold text-[#163f38] heading">AARNAV</h1>
         </div>
       </section>
       <section class="min-h-screen snap-center flex items-start">
-        <div class="pl-8 md:pl-40 pt-32">
-          <p class="text-lg md:text-3xl text-white font-bold">SKILLS</p>
-          <p class="text-base md:text-xl text-white max-w-md mt-4">these skills help break down walls that prevent progress...</p>
-          <p class="text-base md:text-xl text-white mt-6"><span class="font-medium">currently learning:</span> PyTorch</p>
+        <div class="pl-7 md:pl-40 pt-32">
+          <p class="text-xl md:text-8xl text-[#368f8b] made-infinity">SKILLS</p>
+          <p class="text-xl pl-2 md:text-2xl text-white max-w-md mt-4 product-sans">These skills help break down walls that prevent progress...</p>
+          <p class="text-base pl-2 md:text-2xl text-white mt-6 product-sans">currently learning: tRPC</p>
         </div>
         <canvas id="skillsCanvas" class="absolute top-0 left-0 w-full h-full z-20 hidden"></canvas>
       </section>
       <section class="min-h-screen flex flex-col items-center pt-16">
-        <p class="text-3xl md:text-2xl font-bold text-white mb-8">PROJECTS</p>
-        
-        <!-- Gallery controls (arrows) -->
+        <p class="md:text-8xl text-[#368f8b] made-infinity">PROJECTS</p>
+        <p class="mb-8 md:text-xl text-white product-sans">a gallery of 6: my finest works so far</p>
         <div id="galleryControls" class="fixed bottom-10 left-0 w-full flex justify-center items-center z-40" style="display: none;">
           <div class="flex items-center gap-16">
             <button id="galleryLeftArrow" class="arrow-btn arrow-left" aria-label="Previous project"></button>
-            
             <div id="projectInfo" class="flex flex-col items-center justify-center text-center text-white opacity-0 transition-opacity duration-500 ease-in-out" style="width: 300px;">
-              <h2 id="projectTitle" class="text-2xl font-bold mb-2"></h2>
-              <p id="projectDescription" class="text-lg mb-4"></p>
-              <a id="projectLink" href="#" target="_blank" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white transition-colors duration-300">Learn More</a>
+              <h2 id="projectTitle" class="text-2xl font-bold mb-2 product-sans"></h2>
+              <p id="projectDescription" class="text-lg mb-4 product-sans"></p>
+              <a id="projectLink" href="#" target="_blank" class="px-4 py-2 bg-[#368f8b] hover:bg-[#012622] rounded text-white transition-colors duration-300 product-sans">Learn More</a>
             </div>
-            
             <button id="galleryRightArrow" class="arrow-btn arrow-right" aria-label="Next project"></button>
           </div>
         </div>
       </section>
-      <section class="min-h-screen snap-center flex items-center relative">
-        <!-- GIF Background Container -->
-
-        <div class="w-1/2 pl-8 md:pl-40 relative z-10">
-          <p class="text-xl md:text-xl text-gray-700">about me</p>
+      <section class="min-h-screen snap-center flex items-center justify-center relative overflow-hidden">
+        <!-- From Uiverse.io by cuzpq --> 
+        <div class="theme-toggle-container">
+          <input type="checkbox" class="theme-checkbox" id="themeToggle">
+        </div>
+        <div class="absolute top-8 left-0 right-0 text-center px-4 pt-12 text-2xl font-medium text-[#368f8b] mx-auto max-w-4xl product-sans">
+          I'm currently a student open to working. I love design in any aspect; designing databases, java classes or front-ends, creation is what I live for!
+        </div>
+        <div class="content-section active" id="educationContent"></div>
+        <div class="content-section" id="experienceContent">
+          <p class="text-4xl made-infinity text-[#368f8b]">EDUCATION</p>
+          <p class="text-xl">B. Eng / B. Computer Science @ UNSW 2023-2026</p>
+        </div>
+      </section>
+      <section class="min-h-screen snap-center flex items-center justify-center relative overflow-hidden">
+        <div class="parent w-[98%] h-[97.5%]">
+          <div class="div1 item"> 
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6 made-infinity">CONTACT ME</h2>
+            
+            <form class="contact-form">
+              <div class="mb-4">
+                <label for="name" class="block text-white mb-2 product-sans">Name</label>
+                <input type="text" id="name" class="contact-input product-sans" placeholder="Your name">
+              </div>
+              
+              <div class="mb-4">
+                <label for="email" class="block text-white mb-2 product-sans">Email</label>
+                <input type="email" id="email" class="contact-input product-sans" placeholder="your.email@example.com">
+              </div>
+              
+              <div class="mb-5">
+                <label for="message" class="block text-white mb-2 product-sans">Message</label>
+                <textarea id="message" class="contact-input product-sans" placeholder="Your message here..."></textarea>
+              </div>
+              
+              <button type="submit" class="contact-submit product-sans">Send Message</button>
+            </form>
+          </div>
+          
+          <div class="div2 item">div 2</div>
+          
+          <div class="div3 item">
+            <h3 class="text-xl md:text-2xl mb-5 text-white product-sans">Connect with me</h3>
+            
+            <div class="social-links">
+              <a href="mailto:aarnavsheth19@gmail.com" class="social-link product-sans">
+                <span class="contact-icon">📧</span>
+                aarnavsheth19@gmail.com
+              </a>
+              
+              <a href="https://github.com/aaarnv" target="_blank" class="social-link product-sans">
+                <span class="contact-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                  </svg>
+                </span>
+                GitHub
+              </a>
+              
+              <a href="https://linkedin.com/in/aarnav" target="_blank" class="social-link product-sans">
+                <span class="contact-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/>
+                  </svg>
+                </span>
+                LinkedIn
+              </a>
+            </div>
+          </div>
+          
+          <div class="div4 item">
+            <!-- GIF background is applied via CSS -->
+          </div>
+          
+          <div class="div5 item">div 5</div>
+          
+          <div class="div6 item">div 6</div>
         </div>
       </section>
     </div>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.151.0/three.module.min.js",
+          "three/addons/": "https://unpkg.com/three@0.151.0/examples/jsm/"
+        }
+      }
+    </script>
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
     <script type="module" src="/src/main.js"></script>
-    <script type="module" src="/src/particleCursor.js"></script>
   </body>
 </html>

@@ -3,6 +3,9 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { initSkillsPhysics } from './skillsPhysics.js';
 import { initProjectsGallery } from './projectsGallery.js';
+import { initCameraController } from './cameraController.js';
+import { initLaptop } from './laptopController.js';
+
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -14,9 +17,7 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0xf7f6f9);
 
-// Initial camera position
-const initialCameraPos = new THREE.Vector3(0, 0, 50);
-camera.position.copy(initialCameraPos);
+const cameraController = initCameraController(scene, camera);
 
 const pointLight = new THREE.PointLight(0xffffff);
 pointLight.position.set(5, 5, 5);
@@ -28,21 +29,19 @@ let isFollowing = true;
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-// Store initial head position and rotation
 const initialHeadPos = new THREE.Vector3(50, 0, -60);
 let initialHeadQuaternion;
 
-// Black plane for "black screen" effect
-let blackPlane;
-const blackPlaneGeometry = new THREE.PlaneGeometry(100, 100);
-const blackPlaneMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide });
-blackPlane = new THREE.Mesh(blackPlaneGeometry, blackPlaneMaterial);
-blackPlane.position.set(0, 0, -1);
-blackPlane.visible = false;
-scene.add(blackPlane);
+// Initialize laptop and add to scene
+const laptopController = initLaptop(scene);
+const laptop = laptopController.getLaptop();
+laptop.position.set(160, -20, -30); 
+laptop.rotation.set(0, -0.2, 0);
+laptop.scale.set(2, 2, 2); 
+laptop.visible = false; 
+scene.add(laptop);
 
-// Initialize projects gallery
-const projectsGallery = initProjectsGallery(scene, camera);
+const projectsGallery = initProjectsGallery(scene, camera, cameraController);
 
 const loader = new GLTFLoader();
 loader.load(
@@ -62,160 +61,198 @@ loader.load(
   }
 );
 
-let currentSection = 0;
-let previousSection = 0;
-let isInProjectsSection = false;
-let lastScrollTop = 0; // Track last scroll position to determine direction
+const codingVideo = document.createElement('video');
+codingVideo.src = '/coding.mp4';
+codingVideo.loop = true;
+codingVideo.muted = true;
+codingVideo.playsInline = true;
+codingVideo.crossOrigin = 'anonymous';
 
-function handleSectionChange(newSection) {
+const codingVideoTexture = new THREE.VideoTexture(codingVideo);
+codingVideoTexture.minFilter = THREE.LinearFilter;
+codingVideoTexture.magFilter = THREE.LinearFilter;
+
+const codingVideoMaterial = new THREE.MeshStandardMaterial({
+  map: codingVideoTexture,
+  roughness: 0.5,
+  metalness: 0.5
+});
+
+let originalHeadMaterials = new Map();
+
+let isEducationActive = true;
+
+function setupToggle() {
+  const themeCheckbox = document.getElementById('themeToggle');
+  const educationContent = document.getElementById('educationContent');
+  const experienceContent = document.getElementById('experienceContent');
+
+  themeCheckbox.addEventListener('change', () => {
+    if (themeCheckbox.checked) {
+      // Checkbox is checked - show Experience content with white background
+      educationContent.classList.remove('active');
+      experienceContent.classList.add('active');
+      laptopController.closeLaptop();
+      isEducationActive = false;
+      scene.background = new THREE.Color(0xFFFFFF);
+      
+      // Restore original head materials when in white mode
+      if (headModel && originalHeadMaterials.size > 0) {
+        headModel.traverse(child => {
+          if (child.isMesh && originalHeadMaterials.has(child.uuid)) {
+            child.material = originalHeadMaterials.get(child.uuid);
+          }
+        });
+      }
+    } else {
+      // Checkbox is unchecked - show Education content with black background
+      educationContent.classList.add('active');
+      experienceContent.classList.remove('active');
+      laptopController.openLaptop();
+      isEducationActive = true;
+      scene.background = new THREE.Color(0x000000);
+      
+      // Apply video texture to head when in black mode
+      if (headModel) {
+        // Store original materials if not already stored
+        if (originalHeadMaterials.size === 0) {
+          headModel.traverse(child => {
+            if (child.isMesh && child.material) {
+              originalHeadMaterials.set(child.uuid, child.material.clone());
+            }
+          });
+        }
+        
+        // Ensure video is playing
+        codingVideo.load();
+        codingVideo.play().catch(e => console.error("Video play failed:", e));
+        codingVideoTexture.needsUpdate = true;
+        
+        // Apply video texture to head
+        headModel.traverse(child => {
+          if (child.isMesh) {
+            child.material = new THREE.MeshBasicMaterial({
+              map: codingVideoTexture,
+              toneMapped: false
+            });
+          }
+        });
+      }
+    }
+  });
+}
+
+function handleSectionChange(newSection, scrollTop) {
   console.log(`Changing to section ${newSection}`);
 
   const skillsCanvas = document.getElementById('skillsCanvas');
-  const aboutMeBg = document.querySelector('.about-me-bg');
   const bgCanvas = document.querySelector('#bg');
 
-  // Reset lights to default state
   pointLight.visible = true;
   ambientLight.visible = true;
-  bgCanvas.style.display = 'block'; // Ensure Three.js canvas is visible by default
-  if (aboutMeBg) aboutMeBg.style.display = 'none'; // Hide GIF by default
+  bgCanvas.style.display = 'block';
 
-  // Handle section-specific logic
+  cameraController.handleSectionChange(newSection, headModel, scrollTop);
+
   if (newSection === 2) {
-    // Projects section
-    camera.position.copy(initialCameraPos);
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
     if (skillsCanvas) {
       skillsCanvas.classList.add('hidden');
       skillsCanvas.style.display = 'none';
     }
     projectsGallery.showGallery();
-    blackPlane.visible = false;
-    isInProjectsSection = true;
-  } else if (newSection === 3) {
-    // About Me section - Set up camera once when entering section
+    if (headModel && originalHeadMaterials.size > 0) {
+      headModel.traverse(child => {
+        if (child.isMesh && originalHeadMaterials.has(child.uuid)) {
+          child.material = originalHeadMaterials.get(child.uuid);
+        }
+      });
+    }
+    laptop.visible = false; // Hide laptop in Projects section
+  } else if (newSection === 3) { // About Me section
+    if (headModel && originalHeadMaterials.size === 0) {
+      headModel.traverse(child => {
+        if (child.isMesh && child.material) {
+          originalHeadMaterials.set(child.uuid, child.material.clone());
+        }
+      });
+    }
+    codingVideo.load();
+    codingVideo.play().catch(e => console.error("Video play failed:", e));
+    codingVideoTexture.needsUpdate = true;
+    if (headModel) {
+      headModel.traverse(child => {
+        if (child.isMesh) {
+          child.material = new THREE.MeshBasicMaterial({
+            map: codingVideoTexture,
+            toneMapped: false
+          });
+        }
+      });
+    }
     projectsGallery.hideGallery();
-    blackPlane.visible = false;
-    isInProjectsSection = false;
-    camera.position = new THREE.Vector3(0, 0, 50);
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
-    headModel.visible = true;
-
-    // Disable lights to make head appear black
-    pointLight.visible = false;
-    ambientLight.visible = false;
-    // Hide Three.js canvas to show GIF
-    bgCanvas.style.display = 'none';
-    if (aboutMeBg) aboutMeBg.style.display = 'block';
-    // Hide skills and projects
+    pointLight.visible = true;
+    ambientLight.visible = true;
     if (skillsCanvas) {
       skillsCanvas.classList.add('hidden');
       skillsCanvas.style.display = 'none';
     }
+    laptop.visible = true; // Show laptop in About Me section
   } else {
-    // Sections 0 and 1
-    isInProjectsSection = false;
+    if (headModel && originalHeadMaterials.size > 0) {
+      headModel.traverse(child => {
+        if (child.isMesh && originalHeadMaterials.has(child.uuid)) {
+          child.material = originalHeadMaterials.get(child.uuid);
+        }
+      });
+    }
     if (newSection === 1) {
       if (skillsCanvas) {
         skillsCanvas.classList.remove('hidden');
         skillsCanvas.style.display = 'block';
       }
-      blackPlane.visible = true;
       projectsGallery.hideGallery();
     } else {
-      // Section 0
       if (skillsCanvas) {
         skillsCanvas.classList.add('hidden');
         skillsCanvas.style.display = 'none';
       }
-      blackPlane.visible = false;
       projectsGallery.hideGallery();
     }
+    laptop.visible = false; // Hide laptop in other sections
   }
 }
 
 function moveCamera() {
   const snapContainer = document.querySelector('.snap-container');
   const scrollTop = snapContainer.scrollTop;
-  const maxScrollEffect = 200;
   const sectionHeight = window.innerHeight;
-  
-  // Determine scroll direction
-  const isScrollingDown = scrollTop > lastScrollTop;
-  lastScrollTop = scrollTop;
-  
-  // Calculate current section
-  previousSection = currentSection;
-  currentSection = Math.round(scrollTop / sectionHeight);
-  
-  // Handle section changes
-  if (previousSection !== currentSection) {
-    handleSectionChange(currentSection);
-    // If we've just entered section 3 (About Me), we skip further camera manipulation
-    if (currentSection === 3) {
-      return; // Exit the function to prevent camera overrides
-    }
-  }
-  
-  // Skip camera manipulation if we're in About Me section
-  if (currentSection === 3) {
-    console.log('In About Me section, skipping camera manipulation');
-    return;
-  }
-  
-  // Normal camera behavior for other sections
-  if (!isInProjectsSection) {
-    if (scrollTop <= 0) {
-      // Home section - reset everything
-      camera.position.copy(initialCameraPos);
-      const lookAtPoint = new THREE.Vector3(0, 0, 0);
-      camera.lookAt(lookAtPoint);
-      
-      if (headModel) {
-        headModel.position.copy(initialHeadPos);
-        if (!isFollowing) {
-          headModel.quaternion.copy(initialHeadQuaternion);
-        }
-        headModel.visible = true;
-      }
-      blackPlane.visible = false;
-    } else {
-      // Calculate zoom factor based on scroll position
-      const zoomFactor = Math.min(scrollTop / maxScrollEffect, 1);
-      
-      // Interpolate camera position
-      camera.position.x = THREE.MathUtils.lerp(initialCameraPos.x, initialHeadPos.x, zoomFactor);
-      camera.position.y = THREE.MathUtils.lerp(initialCameraPos.y, initialHeadPos.y + 8, zoomFactor);
-      camera.position.z = THREE.MathUtils.lerp(initialCameraPos.z, initialHeadPos.z, zoomFactor);
-      camera.position.z += THREE.MathUtils.lerp(0, 20, zoomFactor);
-      
-      if (headModel) {
-        if (!isFollowing) {
-          headModel.quaternion.slerp(initialHeadQuaternion, 0.1);
-        }
-        
-        // Handle head visibility based on zoom factor
-        if (zoomFactor >= 0.92) {
-          headModel.visible = false;
-          blackPlane.visible = true;
-          blackPlane.position.copy(camera.position);
-          blackPlane.position.z -= 1;
-          blackPlane.lookAt(camera.position);
+  if (scrollTop >= 0 && scrollTop <= sectionHeight) {
+    const skillsCanvas = document.getElementById('skillsCanvas');
+    if (cameraController.handleScrollTransition(scrollTop, headModel)) {
+      if (skillsCanvas) {
+        const zoomFactor = Math.min(scrollTop / (sectionHeight * 0.8), 1);
+        if (zoomFactor > 0.8) {
+          skillsCanvas.classList.remove('hidden');
+          skillsCanvas.style.display = 'block';
+          skillsCanvas.style.opacity = (zoomFactor - 0.8) * 5;
         } else {
-          headModel.visible = true;
-          blackPlane.visible = false;
+          skillsCanvas.classList.add('hidden');
+          skillsCanvas.style.display = 'none';
         }
       }
+      return;
     }
+  }
+  const currentSection = Math.round(scrollTop / sectionHeight);
+  if (cameraController.getCurrentSection() !== currentSection) {
+    handleSectionChange(currentSection, scrollTop);
   }
 }
 
 function onClick(event) {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
   raycaster.setFromCamera(mouse, camera);
-  
   if (headModel) {
     const intersects = raycaster.intersectObject(headModel, true);
     if (intersects.length > 0) {
@@ -227,17 +264,16 @@ function onClick(event) {
 function orientHeadToCursor(event) {
   const snapContainer = document.querySelector('.snap-container');
   const scrollTop = snapContainer.scrollTop;
-  if (scrollTop === 0 && headModel && isFollowing) {
+  const sectionHeight = window.innerHeight;
+  const currentSection = Math.round(scrollTop / sectionHeight);
+  if ((currentSection === 0 || currentSection === 3) && headModel && isFollowing) {
     const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
     const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
-    
     const vector = new THREE.Vector3(mouseX, mouseY, 0.5);
     vector.unproject(camera);
-    
     const dir = vector.sub(camera.position).normalize();
     const distance = -camera.position.z / dir.z;
     const targetPos = camera.position.clone().add(dir.multiplyScalar(distance));
-    
     headModel.lookAt(targetPos);
     const targetQuaternion = new THREE.Quaternion();
     targetQuaternion.setFromRotationMatrix(headModel.matrix);
@@ -245,8 +281,7 @@ function orientHeadToCursor(event) {
   }
 }
 
-// Set up event listeners
-document.querySelector('.snap-container').onscroll = moveCamera;
+document.querySelector('.snap-container').addEventListener('scroll', moveCamera);
 document.addEventListener('mousemove', orientHeadToCursor);
 document.addEventListener('click', onClick);
 
@@ -264,7 +299,83 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// Initialize components when DOM is loaded
+document.addEventListener('keydown', (event) => {
+  const snapContainer = document.querySelector('.snap-container');
+  const sectionHeight = window.innerHeight;
+  const totalSections = 5;
+  const currentScrollPosition = snapContainer.scrollTop;
+  const currentSection = Math.round(currentScrollPosition / sectionHeight);
+  switch (event.key) {
+    case 'ArrowUp':
+      event.preventDefault();
+      if (currentSection > 0) {
+        const targetScrollPosition = (currentSection - 1) * sectionHeight;
+        snapContainer.scrollTo({
+          top: targetScrollPosition,
+          behavior: 'smooth'
+        });
+      }
+      break;
+    case 'ArrowDown':
+      event.preventDefault();
+      if (currentSection < totalSections - 1) {
+        const targetScrollPosition = (currentSection + 1) * sectionHeight;
+        snapContainer.scrollTo({
+          top: targetScrollPosition,
+          behavior: 'smooth'
+        });
+      }
+      break;
+  }
+});
+
+// Create intro overlay
+function createIntroOverlay() {
+  const overlay = document.createElement('div');
+  overlay.id = 'intro-overlay';
+  
+  // Create text container
+  const textContainer = document.createElement('div');
+  textContainer.id = 'typing-text';
+  textContainer.className = 'tinos-regular-italic';
+  
+  overlay.appendChild(textContainer);
+  document.body.appendChild(overlay);
+  
+  // The text to type
+  const text = "the mind of a backend dev and the heart of a frontend dev makes one hell of a full-stack engineer";
+  
+  // Start typing animation
+  let charIndex = 0;
+  const typingSpeed = 60; // milliseconds per character
+  
+  const typingInterval = setInterval(() => {
+    if (charIndex < text.length) {
+      textContainer.textContent += text.charAt(charIndex);
+      charIndex++;
+    } else {
+      clearInterval(typingInterval);
+      // Wait a bit after typing finishes
+      setTimeout(() => {
+        // Fade out the overlay
+        overlay.style.opacity = '0';
+        // Remove overlay after fade completes
+        setTimeout(() => {
+          document.body.removeChild(overlay);
+        }, 1000);
+      }, 1500);
+    }
+  }, typingSpeed);
+}
+
+// Execute intro before anything else
 document.addEventListener('DOMContentLoaded', () => {
-  initSkillsPhysics();
+  createIntroOverlay();
+  
+  setTimeout(() => {
+    // The existing initialization code can go here
+    initSkillsPhysics();
+    setupToggle();
+
+  }, 6000); // Adjust timing based on text length and typing speed
 });

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 
-export function initProjectsGallery(scene, camera) {
+export function initProjectsGallery(scene, camera, cameraController) {
   // Project data - with actual projects and GitHub links
   const projects = [
     {
@@ -17,10 +17,10 @@ export function initProjectsGallery(scene, camera) {
       github: 'https://github.com/aaarnv/fullofshift'
     },
     {
-        image: '/projects/project4.jpg',
-        title: 'Tributary',
-        description: 'Java JUnit',
-        github: 'https://github.com/username/fitness-app'
+      image: '/projects/project4.jpg',
+      title: 'Tributary',
+      description: 'Java JUnit',
+      github: 'https://github.com/username/fitness-app'
     },
     {
       image: '/projects/project4.jpg',
@@ -29,10 +29,10 @@ export function initProjectsGallery(scene, camera) {
       github: 'https://github.com/aaarnv/3d-portfolio'
     },
     {
-        image: '/projects/project2.png',
-        title: 'Portfolio Website',
-        description: 'ThreeJS MatterJS Tailwind CSS',
-        github: 'https://github.com/aaarnv/3d-portfolio'
+      image: '/projects/project2.png',
+      title: 'Portfolio Website',
+      description: 'ThreeJS MatterJS Tailwind CSS',
+      github: 'https://github.com/aaarnv/3d-portfolio'
     },
     {
       image: '/projects/project6.jpg',
@@ -101,7 +101,7 @@ export function initProjectsGallery(scene, camera) {
   galleryRoot.add(spotlight);
   galleryRoot.add(spotlight.target);
   
-  // Store original scene background and lighting
+  // Store original scene lighting
   let originalLights = [];
   
   // Add reflective floor
@@ -118,9 +118,6 @@ export function initProjectsGallery(scene, camera) {
   mirror.rotateX(-Math.PI / 2);
   galleryRoot.add(mirror);
   
-  // Store original camera position and look target
-  let originalCameraPosition = null;
-  let originalCameraRotation = null;
   let currentProjectIndex = 0;
   
   // Animation state variables
@@ -261,15 +258,8 @@ export function initProjectsGallery(scene, camera) {
     // Setup arrow controls
     setupArrowControls();
     
-    // Save original camera state
-    originalCameraPosition = camera.position;
-    console.log(`Original camera position: ${originalCameraPosition}`);
-    originalCameraRotation = camera.rotation.clone();
-    
-    // Save original background and set black background
+    // Set black background and hide original lighting
     scene.background = new THREE.Color(0x000000);
-    
-    // Save and hide original lighting
     saveOriginalLighting();
     hideSceneLighting();
     
@@ -278,16 +268,16 @@ export function initProjectsGallery(scene, camera) {
       scene.add(spotlight.target);
     }
     
+    // Position camera for gallery view (central position)
+    // We use the camera controller's positioning, but need to set the lookAt here
+    camera.lookAt(0, 0, -radius);
+    
     // Make gallery visible
     galleryRoot.visible = true;
     
     // Reset gallery rotation to face first project
     galleryRoot.rotation.y = 0;
     currentProjectIndex = 0;
-    
-    // Position camera in the center of the gallery
-    camera.position.set(0, 0, 0); 
-    camera.lookAt(0, 0, -radius); 
     
     // Show project info and navigation arrows
     const projectInfo = document.getElementById('projectInfo');
@@ -322,41 +312,8 @@ export function initProjectsGallery(scene, camera) {
       galleryControls.style.display = 'none';
     }
     
-    scene.background =  new THREE.Color(0xFFFFFF);
-    
     // Restore original lighting
     restoreSceneLighting();
-    
-    // Restore original camera position and rotation
-    if (originalCameraPosition && originalCameraRotation) {
-      // Set up manual animation for camera repositioning
-      const startPos = camera.position.clone();
-      const startRot = camera.rotation.clone();
-      const startTime = Date.now();
-      const duration = 1000;
-      
-      function animateCameraReturn() {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const easeProgress = easeInOutQuad(progress);
-        
-        // Interpolate position
-        camera.position.x = startPos.x + (originalCameraPosition.x - startPos.x) * easeProgress;
-        camera.position.y = startPos.y + (originalCameraPosition.y - startPos.y) * easeProgress;
-        camera.position.z = startPos.z + (originalCameraPosition.z - startPos.z) * easeProgress;
-        
-        // Interpolate rotation
-        camera.rotation.x = startRot.x + (originalCameraRotation.x - startRot.x) * easeProgress;
-        camera.rotation.y = startRot.y + (originalCameraRotation.y - startRot.y) * easeProgress;
-        camera.rotation.z = startRot.z + (originalCameraRotation.z - startRot.z) * easeProgress;
-        
-        if (progress < 1) {
-          requestAnimationFrame(animateCameraReturn);
-        }
-      }
-      
-      animateCameraReturn();
-    }
     
     // Remove event handlers
     document.removeEventListener('wheel', handleWheel);
@@ -370,6 +327,9 @@ export function initProjectsGallery(scene, camera) {
 
   // Animation function for the gallery
   function animateGallery() {
+    // Only run animations if gallery is visible
+    if (!galleryRoot.visible) return;
+    
     // Handle rotation animation if in progress
     if (isRotating) {
       const elapsed = Date.now() - rotationStartTime;
