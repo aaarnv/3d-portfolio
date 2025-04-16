@@ -274,7 +274,7 @@ canvas.hidden {
 .theme-toggle-container {
   position: absolute;
   bottom: 20%;
-  left: 23%;
+  left: 20%;
 }
 
 /* From Uiverse.io by cuzpq */ 
@@ -433,7 +433,7 @@ canvas.hidden {
     .div1 {
       grid-area: 1 / 3 / 4 / 6;
       background-color: #163f38;
-      opacity: 0.9;
+      opacity: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -444,8 +444,8 @@ canvas.hidden {
     .div2 {
       grid-area: 3 / 1 / 6 / 3;
       border: 2px double #163f38;
-      background-color: #368f8b;
-      opacity: 0.5;
+      background-color: #008080;
+      opacity: 1;
     }
     
     .div3 {
@@ -481,105 +481,22 @@ canvas.hidden {
       background-repeat: no-repeat;
       border-radius: 15px;
       z-index: -1;
+      background-size: 105%;
     }
     
     .div5 {
       grid-area: 1 / 6 / 3 / 8;
       border: 2px double #368f8b;
-      background-color: #368f8b;
-      opacity: 0.5;
+      background-color: #012622;
     }
     
     .div6 {
       grid-area: 1 / 1 / 3 / 3;
-      background-color: #163f38;
-    }
-    
-    /* Contact form styles */
-    .contact-form {
-      width: 100%;
-      max-width: 500px;
-    }
-    
-    .contact-input {
-      background-color: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(54, 143, 139, 0.5);
-      color: #111827;
-      border-radius: 4px;
-      padding: 0.75rem;
-      margin-bottom: 1rem;
-      width: 100%;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .contact-input:focus {
-      outline: none;
-      border-color: #368f8b;
-      box-shadow: 0 0 0 2px rgba(54, 143, 139, 0.3);
-    }
-    
-    .contact-input::placeholder {
-      color: #6B7280;
-    }
-    
-    textarea.contact-input {
-      min-height: 120px;
-      resize: vertical;
-    }
-    
-    .contact-submit {
-      background-color: #368f8b;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 6px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      border: none;
-      width: 100%;
-      margin-top: 0.5rem;
-    }
-    
-    .contact-submit:hover {
-      background-color: #2a726f;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    
-    .contact-submit:active {
-      transform: translateY(0);
-    }
-    
-    /* Social links styles */
-    .social-links {
+      background-color: #163f37;
+      overflow: hidden;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
     }
     
-    .social-link {
-      display: flex;
-      align-items: center;
-      color: white;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-    }
-    
-    .social-link:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-      transform: translateX(5px);
-    }
-    
-    .contact-icon {
-      margin-right: 0.75rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
     .model-title {
       position: absolute;
       top: 10px;
@@ -591,3 +508,112 @@ canvas.hidden {
       pointer-events: none;
     }
     
+    /* Contact form styles */
+.contact-input {
+  transition: border-color 0.3s ease;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.contact-input:focus {
+  outline: none;
+  border-color: #246865;
+  box-shadow: 0 0 0 2px rgba(54, 143, 139, 0.3);
+}
+
+.contact-input.border-red-500 {
+  border-color: #f56565;
+}
+
+.contact-input.border-green-500 {
+  border-color: #48bb78;
+}
+
+.contact-submit {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.contact-submit:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s;
+}
+
+.contact-submit:hover:before {
+  left: 100%;
+}
+
+.contact-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.feedback-container {
+  font-family: 'Product Sans', sans-serif;
+  padding: 6px 10px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  min-height: 20px;
+}
+
+.hidden {
+  opacity: 0;
+  visibility: hidden;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Loading animation for submit button */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.contact-submit.loading {
+  animation: pulse 1.5s infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .feedback-container {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+}
+
+.g-recaptcha > div {
+  margin: 0 auto;
+}
+
+/* Override reCAPTCHA iframe styles */
+.grecaptcha-badge {
+  background-color: rgba(22, 63, 56, 0.8) !important;
+}
+
+/* Add this to your styles.css file or in a style tag in the head */
+#screen-size-warning {
+  transition: opacity 0.5s ease-in-out;
+  z-index: 9999;
+}
+
+#screen-size-warning.flex {
+  display: flex;
+}
+
+.device-icon {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}

@@ -5,7 +5,8 @@ import { initSkillsPhysics } from './skillsPhysics.js';
 import { initProjectsGallery } from './projectsGallery.js';
 import { initCameraController } from './cameraController.js';
 import { initLaptop } from './laptopController.js';
-
+import { initHeadModelViewer, initLaptopModelViewer } from './InteractiveModelViewers.js';
+import { initContactForm } from './contactForm.js'; // Import the contact form module
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -29,7 +30,7 @@ let isFollowing = true;
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-const initialHeadPos = new THREE.Vector3(50, 0, -60);
+const initialHeadPos = new THREE.Vector3(50, 0, -45);
 let initialHeadQuaternion;
 
 // Initialize laptop and add to scene
@@ -368,6 +369,30 @@ function createIntroOverlay() {
   }, typingSpeed);
 }
 
+// Screen width warning functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const screenSizeWarning = document.getElementById('screen-size-warning');
+  
+  // Function to check screen size and show/hide warning
+  function checkScreenWidth() {
+    if (window.innerWidth < 1200) {
+      screenSizeWarning.classList.remove('hidden');
+      screenSizeWarning.classList.add('flex');
+      document.body.style.overflow = 'hidden'; // Prevent scrolling when warning is shown
+    } else {
+      screenSizeWarning.classList.add('hidden');
+      screenSizeWarning.classList.remove('flex');
+      document.body.style.overflow = ''; // Restore scrolling
+    }
+  }
+  
+  // Check screen size on page load
+  checkScreenWidth();
+  
+  // Check screen size when window is resized
+  window.addEventListener('resize', checkScreenWidth);
+});
+
 // Execute intro before anything else
 document.addEventListener('DOMContentLoaded', () => {
   createIntroOverlay();
@@ -377,5 +402,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initSkillsPhysics();
     setupToggle();
 
-  }, 6000); // Adjust timing based on text length and typing speed
+    initContactForm();
+    initHeadModelViewer();
+    initLaptopModelViewer();
+  }, 2000); // Adjust timing based on text length and typing speed
 });

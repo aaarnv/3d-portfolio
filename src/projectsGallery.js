@@ -5,41 +5,41 @@ export function initProjectsGallery(scene, camera, cameraController) {
   // Project data - with actual projects and GitHub links
   const projects = [
     {
-      image: '/projects/project1.png',
-      title: 'AI Data Analyst Chatbot',
-      description: 'Python Flask OpenAI API Square API SQLite',
-      github: 'https://github.com/aaarnv/rnm-ai'
+        image: '/projects/project1.png',
+        title: 'AI Data Analyst Chatbot',
+        description: 'Python Flask OpenAI API Square API SQLite',
+        github: 'https://github.com/aaarnv/rnm-ai'
     },
     {
-      image: '/projects/projectshift.png',
-      title: 'Shift Management App',
-      description: 'TypeScript Next Prisma NextAuth PostgreSQL',
-      github: 'https://github.com/aaarnv/fullofshift'
+        image: '/projects/projectshift.png',
+        title: 'Shift Management App',
+        description: 'TypeScript Next Prisma NextAuth PostgreSQL',
+        github: 'https://github.com/aaarnv/fullofshift'
     },
     {
-      image: '/projects/project4.jpg',
-      title: 'Tributary',
-      description: 'Java JUnit',
-      github: 'https://github.com/username/fitness-app'
+        image: '/projects/tributary.png',
+        title: 'Tributary',
+        description: 'Java JUnit Gradle OOP',
+        github: 'https://github.com/aaarnv/java-tributary'
     },
     {
-      image: '/projects/project4.jpg',
-      title: 'Vibecheck: Social Media App',
-      description: 'ThreeJS MatterJS Tailwind CSS',
-      github: 'https://github.com/aaarnv/3d-portfolio'
+        image: '/projects/project6.jpg',
+        title: 'Coming Soon: Stock App',
+        description: 'Swift Firebase',
+        github: 'https://github.com/aaarnv/comming-soon'
     },
     {
-      image: '/projects/project2.png',
-      title: 'Portfolio Website',
-      description: 'ThreeJS MatterJS Tailwind CSS',
-      github: 'https://github.com/aaarnv/3d-portfolio'
+        image: '/projects/dash.png',
+        title: 'VibeCheck: Social Media App',
+        description: 'ExpressJS MongoDB Mongoose React ChartJS',
+        github: 'https://github.com/aaarnv/vibecheck'
     },
     {
-      image: '/projects/project6.jpg',
-      title: 'Coming Soon: Stock App',
-      description: 'Swift Firebase',
-      github: 'https://github.com/username/collab-tool'
-    }
+        image: '/projects/project2.png',
+        title: 'Portfolio Website',
+        description: 'ThreeJS MatterJS EmailJS TailwindCSS',
+        github: 'https://github.com/aaarnv/3d-portfolio'
+    },
   ];
 
   // Extract titles, descriptions, and GitHub links from projects
@@ -64,7 +64,10 @@ export function initProjectsGallery(scene, camera, cameraController) {
   
   for (let i = 0; i < count; i++) {
     const image = textureLoader.load(images[i]);
-  
+
+    image.minFilter = THREE.LinearFilter;
+    image.magFilter = THREE.LinearFilter;
+
     const baseNode = new THREE.Object3D();
     baseNode.rotation.y = 2 * Math.PI * (i / count);
     baseNode.name = `project-${i}`;
@@ -83,8 +86,10 @@ export function initProjectsGallery(scene, camera, cameraController) {
       new THREE.BoxGeometry(3, 2, 0.01),
       new THREE.MeshStandardMaterial({ 
         map: image,
-        emissive: 0x222222,
-        emissiveIntensity: 0.2
+        emissiveIntensity: 0,  // Remove emissive darkening
+        roughness: 0.2,        // Add some shine but not too much
+        metalness: 0,          // Non-metallic for better color reproduction
+        toneMapped: false 
       })
     );
     artwork.position.z = -radius + 1;
