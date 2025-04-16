@@ -385,14 +385,6 @@ canvas.hidden {
   font-display: swap;
 }
 
-.heading {
-  font-family: 'MADEINFINITY', sans-serif;
-  font-weight: medium;
-  font-size: 8rem;
-  text-align: start;
-  margin-bottom: 1rem;
-}
-
 .made-infinity {
   font-family: 'MADEINFINITY', sans-serif;
   font-weight: medium;
