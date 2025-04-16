@@ -272,9 +272,7 @@ canvas.hidden {
 }
 
 .theme-toggle-container {
-  position: absolute;
-  bottom: 20%;
-  left: 20%;
+  margin-top: 5px;
 }
 
 /* From Uiverse.io by cuzpq */ 
@@ -329,7 +327,7 @@ canvas.hidden {
 .content-section {
   position: absolute;
   top: 50%;
-  right: 23%;
+  right: 18.5%;
   transform: translateY(-50%);
   color: black;
   max-width: 500px;

@@ -30,7 +30,7 @@ let isFollowing = true;
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-const initialHeadPos = new THREE.Vector3(50, 0, -45);
+const initialHeadPos = new THREE.Vector3(50, -5, -45);
 let initialHeadQuaternion;
 
 // Initialize laptop and add to scene
