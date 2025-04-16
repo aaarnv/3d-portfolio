@@ -405,5 +405,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initContactForm();
     initHeadModelViewer();
     initLaptopModelViewer();
-  }, 2000); // Adjust timing based on text length and typing speed
+  }, 6000); // Adjust timing based on text length and typing speed
 });
