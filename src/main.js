@@ -369,6 +369,16 @@ function createIntroOverlay() {
   }, typingSpeed);
 }
 
+ // Show scroll indicator after intro
+function showScrollIndicator() {
+  const scrollIndicator = document.getElementById('scroll-indicator');
+  if (scrollIndicator) {
+    setTimeout(() => {
+      scrollIndicator.style.opacity = '1';
+    }, 8500); // Show after 1 second
+  }
+}
+
 // Screen width warning functionality
 document.addEventListener('DOMContentLoaded', function() {
   const screenSizeWarning = document.getElementById('screen-size-warning');
@@ -398,7 +408,8 @@ document.addEventListener('DOMContentLoaded', () => {
   createIntroOverlay();
   
   setTimeout(() => {
-    // The existing initialization code can go here
+    showScrollIndicator();
+
     initSkillsPhysics();
     setupToggle();
 
