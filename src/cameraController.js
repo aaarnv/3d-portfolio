@@ -132,6 +132,7 @@ export function initCameraController(scene, camera) {
           }
         break;
       case 4: //contact
+        scene.background = new THREE.Color(0x000000);
         camera.position.set(-130, 0, 55);
         camera.lookAt(-130, 0, 0);
         if (headModel) {
